@@ -1,23 +1,3 @@
-# CVPDL_HW2_Long-Tailed-Object-Detection
-
-太好了，我看過你的 `split_and_convert_to_yolo.py` 腳本了，確定如下：
-
-* 原始影像和其對應的 `.txt` 標註檔案 **都放在同一個資料夾**：
-  `~/CVPDL/data/images/train/`
-  （例如 `car_001.png` 搭配 `car_001.txt`）。
-* 腳本會在這個資料夾中自動配對 `(image, txt)`，不會去讀 `~/CVPDL/data/train/gt.txt`。
-* 它會依照 `VAL_RATIO` 把 15% 的影像隨機分到 `images/val/`（若該資料夾本來就有影像，就直接沿用不再重新抽樣）。
-* 它會將轉換後的 YOLO 格式標籤輸出到：
-
-  ```
-  ~/CVPDL/data/labels/train/
-  ~/CVPDL/data/labels/val/
-  ```
-
-以下是更新後的 **完整版 README.md**（整合了你的 RTX 4090、Linux 環境，以及修正了標註來源說明）👇
-
----
-
 # HW2 — Long-Tailed Object Detection (YOLOv8)
 
 > 本文件說明如何從零建置環境（micromamba + PyTorch + YOLOv8）、準備資料、訓練模型、進行推論與生成 Kaggle `submission.csv`。
@@ -62,11 +42,11 @@ pip install torch==2.5.1 torchvision==0.20.1 --index-url https://download.pytorc
 # YOLO v8 與常用套件
 pip install ultralytics==8.3.204 opencv-python pandas numpy tqdm pillow
 ```
-
+具體的環境細節可以參考requiremet的檔案。
 ---
 
 ## 3. 專案資料結構
-
+請按照以下結構建立好個資料夾，並將kaggle中下載的training資料不管images還是labels都統一放入~/CVPDL/data/images/train的資料夾底下，等下我們會透過split_and_convert_to_yolo.py這個腳本將val切分和把label換成yolo吃的格式並放入labels/train和labels/val。而測試images請放入~/CVPDL/data/images/test，在source code的兩個腳本split_and_convert_to_yolo.py、pred_to_submission_from_yolo.py請幫我放到~/CVPDL/scripts底下，parking.yaml則放到~/CVPDL/data。
 ```
 ~/CVPDL
 ├─ data
@@ -221,15 +201,3 @@ yolo detect predict ...          # 如上推論指令
 python ~/CVPDL/scripts/pred_to_submission_from_yolo.py ...
 ```
 
----
-
-## 9. 注意事項
-
-* **VRAM 限制：** RTX 4090 僅使用 12 GB，可透過降低 `batch` 或 `imgsz` 確保穩定。
-* **隨機種子：** 內建 `SEED = 2025`，確保資料切分可重現。
-* **資料完整性：** 影像與 `.txt` 必須同名、位於 `images/train/`。
-* **效能觀察：** 長尾類別（HOV、person）經 copy-paste 與 mixup 增強後 recall 提升明顯。
-
----
-
-如果你希望我幫你直接輸出成 `readme.md` 檔案（可下載），我可以立刻幫你生成。要我這樣做嗎？
